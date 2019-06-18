@@ -1,8 +1,4 @@
-import scipy.misc
-from matplotlib import pyplot
 from numpy import *
-import numpy as np
-import imageio
 from cell_methods import *
 
 filenumber = '00310'
