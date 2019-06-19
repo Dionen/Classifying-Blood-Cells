@@ -86,10 +86,13 @@ def get_total_statistics():
 
 
 if __name__ == '__main__':
-    get_total_statistics()
+    #get_total_statistics()
 
     """
-    filenumber = '00313'
+    00026, 00037, 00055, 00113, 00167, 00374 
+    """
+
+    filenumber = '00374'
 
     img = cv2.imread('dataset-master/JPEGImages/BloodImage_' + filenumber + '.jpg')
     rgb_img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
@@ -101,16 +104,16 @@ if __name__ == '__main__':
 
     plat_img = draw_boundariesPLATELETS(platelet_markers, n_platelets, rbc_img)
     final_img = draw_boundariesWBC(wbc_markers, n_wbc, plat_img)
+
     # cv2.imwrite("out21.png", cv2.cvtColor(final_img, cv2.COLOR_BGR2RGB))
 
     tree = ET.parse('dataset-master/Annotations/BloodImage_' + filenumber + '.xml')
     expected_wbc, expected_platelets, expected_rbc = parsing(tree)
-    # print(n_wbc, n_platelets, n_rbc, '\n', )
 
-    print(expected_wbc, expected_platelets, expected_rbc)
-    print(n_wbc, n_platelets, n_rbc)
     print("WBC PRECISION: %.3f" % precision(n_wbc, expected_wbc))
     print("RBC PRECISION: %.3f" % precision(n_rbc, expected_rbc))
     print("PLATELETS PRECISION: %.3f" % precision(n_platelets, expected_platelets))
 
-    # rgb_img = draw_boundariesWBC(markers, n_cells, edit_img)"""
+    plt.subplot(1, 1, 1)
+    plt.imshow(final_img)
+    plt.show()

@@ -31,8 +31,7 @@ def platelets(rgb_img, hsv_img, wbc_mask):
     mask1 = cv2.inRange(hsv_img, light, dark)
     mask2 = cv2.inRange(hsv_img, light2, dark2)
     mask = mask1 + mask2 - wbc_mask_dilated
-    mask[mask==1] = 0
-
+    mask[mask == 1] = 0
 
     # MORPHOLOGICAL OPERATIONS
     # Filter Kernels
@@ -42,14 +41,14 @@ def platelets(rgb_img, hsv_img, wbc_mask):
 
     closing = cv2.morphologyEx(mask, cv2.MORPH_CLOSE, kernel_close2)
     opening = cv2.morphologyEx(closing, cv2.MORPH_OPEN, kernel_open)
-    dilation = cv2.dilate(opening, kernel_dilate, iterations=5)
+    dilation = cv2.dilate(opening, kernel_dilate, iterations=3)
     sure_bg = dilation
 
     result = cv2.bitwise_and(rgb_img, rgb_img, mask=sure_bg)
 
     # SPLIT MASK IF NEEDED
     # Finding certain foreground
-    dist_transform = cv2.distanceTransform(sure_bg, cv2.DIST_L2, 0)
+    dist_transform = cv2.distanceTransform(sure_bg, cv2.DIST_L2, 5)
     ret, sure_fg = cv2.threshold(dist_transform, 0.70 * dist_transform.max(), 255, 0)
 
     # Finding unknown region
@@ -65,10 +64,6 @@ def platelets(rgb_img, hsv_img, wbc_mask):
 
 
 def wbc(rgb_img, hsv_img):
-    #plt.subplot(2, 6, 1)
-    #plt.imshow(rgb_img)
-    #plt.title('Input Image')
-
     # HSV SEGMENTATION
     # Color range
     light = (150, 50, 0)
@@ -80,7 +75,6 @@ def wbc(rgb_img, hsv_img):
     mask1 = cv2.inRange(hsv_img, light, dark)
     mask2 = cv2.inRange(hsv_img, light2, dark2)
     mask = mask1 + mask2
-
 
     # MORPHOLOGICAL OPERATIONS
     # Filter Kernels
@@ -101,7 +95,7 @@ def wbc(rgb_img, hsv_img):
     # SPLIT MASK IF NEEDED
     # Finding certain foreground
     dist_transform = cv2.distanceTransform(sure_bg, cv2.DIST_L2, 5)
-    ret, sure_fg = cv2.threshold(dist_transform, 0.70 * dist_transform.max(), 255, 0)
+    ret, sure_fg = cv2.threshold(dist_transform, 0.65 * dist_transform.max(), 255, 0)
 
     # Finding unknown region
     sure_fg = np.uint8(sure_fg)
@@ -137,7 +131,7 @@ def rbc(rgb, wbc_mask):
     mask1 = cv2.inRange(hsv_img, light, dark)
     mask2 = cv2.inRange(hsv_img, light2, dark2)
     mask = mask1 + mask2 - wbc_mask
-    mask[mask==1] = 0
+    mask[mask == 1] = 0
 
     # MORPHOLOGICAL OPERATIONS
     # Filter Kernels
@@ -153,10 +147,10 @@ def rbc(rgb, wbc_mask):
 
     # REMOVES WBC
     clos2 = clos - wbc_mask
-    clos2[clos2==1] = 0
-
+    clos2[clos2 == 1] = 0
     result = cv2.bitwise_and(rgb_img, rgb_img, mask=clos2)
 
+    # Hough Algorithm
     circles = cv2.HoughCircles(cv2.cvtColor(result, cv2.COLOR_RGB2GRAY), cv2.HOUGH_GRADIENT, 2, 65, param1=60, param2=30, minRadius=25, maxRadius=55)
 
     if circles is not None:
@@ -178,15 +172,9 @@ def rbc(rgb, wbc_mask):
             new_mask = new_mask*clos2
             crop_img = new_mask[rectY1:rectY2, rectX1:rectX2]
 
-            if (crop_img.mean() < HOUGH_MASK_FACTOR):
+            if crop_img.mean() < HOUGH_MASK_FACTOR:
                 continue
             else:
-                test = cv2.bitwise_and(rgb_img.astype(np.uint8), rgb_img.astype(np.uint8), mask=new_mask.astype(np.uint8))
-                #print(crop_img.mean(), rectY1,rectY2, rectX1,rectX2)
-                #plt.subplot(1, 1, 1)
-                #plt.imshow(test)
-                #plt.show()
-
                 n_rbc += 1
                 rgb_output = draw_boundarieRBC(rgb_output, i[0], i[1], i[2])
 
