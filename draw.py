@@ -3,24 +3,26 @@ import cv2
 
 
 def draw_boundariesWBC(markers, n_cells, edit_img):
-    rgb_img = edit_img
+    rgb_img = edit_img.copy()
     font = cv2.QT_FONT_NORMAL
-    for k in range(2, n_cells + 1):
+    for k in range(2, n_cells + 2):
         contours, hier = cv2.findContours((markers == k).astype(np.uint8), cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
-        x, y, w, h = cv2.boundingRect(contours[0])
-        cv2.rectangle(rgb_img, (x - 16, y - 16), (x + w + 16, y + h + 16), (255, 0, 0), 2)
-        cv2.putText(rgb_img, 'WBC', (x - 10, y + 12), font, 1, (255, 0, 0), 1, cv2.LINE_AA)
+        if contours:
+            x, y, w, h = cv2.boundingRect(contours[0])
+            cv2.rectangle(rgb_img, (x - 16, y - 16), (x + w + 16, y + h + 16), (255, 0, 0), 2)
+            cv2.putText(rgb_img, 'WBC', (x - 10, y + 12), font, 1, (255, 0, 0), 1, cv2.LINE_AA)
     return rgb_img
 
 
 def draw_boundariesPLATELETS(markers, n_cells, edit_img):
     rgb_img = edit_img.copy()
     font = cv2.QT_FONT_NORMAL
-    for k in range(2, n_cells + 1):
+    for k in range(2, n_cells + 2):
         contours, hier = cv2.findContours((markers == k).astype(np.uint8), cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
-        x, y, w, h = cv2.boundingRect(contours[0])
-        cv2.rectangle(rgb_img, (x - 8, y - 8), (x + w + 8, y + h + 8), (0, 0, 255), 1)
-        cv2.putText(rgb_img, 'Platelet', (x - 5, y + 6), font, 0.5, (0, 0, 255), 1, cv2.LINE_AA)
+        if contours:
+            x, y, w, h = cv2.boundingRect(contours[0])
+            cv2.rectangle(rgb_img, (x - 8, y - 8), (x + w + 8, y + h + 8), (0, 0, 255), 1)
+            cv2.putText(rgb_img, 'Platelet', (x - 5, y + 6), font, 0.5, (0, 0, 255), 1, cv2.LINE_AA)
     return rgb_img
 
 

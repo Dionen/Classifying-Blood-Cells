@@ -51,8 +51,13 @@ def adjust_gamma(image, gamma=1.0):
 
 
 def precision(expected_result, result):
-    if expected_result != 0:
-        return 100 - np.abs(expected_result-result)*100/expected_result
+    if expected_result != 0 and result != 0:
+        if expected_result > result:
+            return 100 - (np.abs(expected_result - result)) * 100 / expected_result
+        else:
+            return 100 - (np.abs(expected_result - result)) * 100 / result
+    if expected_result != 0 and result == 0:
+        return 0.0
     elif expected_result == 0 and result != 0:
         return 0.0
     else:
