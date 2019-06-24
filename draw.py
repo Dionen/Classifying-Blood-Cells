@@ -1,3 +1,7 @@
+# João Vitor Guino Rieswick nº9283607
+# SCC0251 - Prof. Moacir Ponti
+# Teaching Assistant: Aline Becher
+
 import numpy as np
 import cv2
 

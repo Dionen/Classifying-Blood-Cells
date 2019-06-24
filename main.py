@@ -1,8 +1,13 @@
+# João Vitor Guino Rieswick nº9283607
+# SCC0251 - Prof. Moacir Ponti
+# Teaching Assistant: Aline Becher
+
 from numpy import *
 from cell_methods import *
 import glob
 
 
+# Parses the annotation file
 def parsing(tree):
     name = ''
     wbc = 0
@@ -32,6 +37,7 @@ def parsing(tree):
     return wbc, platelets, rbc
 
 
+# Reads all input files and generates statistics.
 def get_total_statistics():
     jpeg_names = glob.glob("dataset-master\JPEGImages\*.jpg")
     xml_names = glob.glob("dataset-master\Annotations\*.xml")
@@ -105,7 +111,7 @@ if __name__ == '__main__':
     plat_img = draw_boundariesPLATELETS(platelet_markers, n_platelets, rbc_img)
     final_img = draw_boundariesWBC(wbc_markers, n_wbc, plat_img)
 
-    # cv2.imwrite("out21.png", cv2.cvtColor(final_img, cv2.COLOR_BGR2RGB))
+    # cv2.imwrite("out.png", cv2.cvtColor(final_img, cv2.COLOR_BGR2RGB))
 
     tree = ET.parse('dataset-master/Annotations/BloodImage_' + filenumber + '.xml')
     expected_wbc, expected_platelets, expected_rbc = parsing(tree)
